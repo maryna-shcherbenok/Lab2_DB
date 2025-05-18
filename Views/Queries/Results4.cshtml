@@ -1,0 +1,18 @@
+﻿@model IEnumerable<object>
+@{
+    ViewData["Title"] = "Результати запиту 4";
+}
+
+<h2>Результати запиту 4</h2>
+
+@if (ViewBag.TotalCopies != null)
+{
+    <p><strong>Відділ:</strong> @ViewBag.TitleDepartment</p>
+    <h4>Загальна кількість примірників: @ViewBag.TotalCopies</h4>
+}
+else
+{
+    <div>Немає результатів.</div>
+}
+
+<a class="btn btn-primary mt-3" asp-action="Index" asp-controller="Queries">Назад</a>

@@ -1,0 +1,46 @@
+﻿@model Lab2_DB.Models.Author
+
+@{
+    ViewData["Title"] = "Редагування";
+}
+
+<h1>Редагування</h1>
+
+<h4>Автор</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="FullNameAuthor" class="control-label"></label>
+                <input asp-for="FullNameAuthor" class="form-control" />
+                <span asp-validation-for="FullNameAuthor" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PhoneNumberAuthor" class="control-label"></label>
+                <input asp-for="PhoneNumberAuthor" class="form-control" />
+                <span asp-validation-for="PhoneNumberAuthor" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EmailAuthor" class="control-label"></label>
+                <input asp-for="EmailAuthor" class="form-control" />
+                <span asp-validation-for="EmailAuthor" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Зберегти" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Повернутися до списку</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

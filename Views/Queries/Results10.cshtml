@@ -1,0 +1,25 @@
+﻿@model IEnumerable<object>
+@{
+    ViewData["Title"] = "Результати запиту 10";
+    var props = new[] { "FullNameLibrarian" };
+}
+
+<h2>Результати запиту 10</h2>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Бібліотекар</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.GetType().GetProperty("FullNameLibrarian")?.GetValue(item)</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a class="btn btn-primary mt-3" asp-action="Index" asp-controller="Queries">Назад</a>

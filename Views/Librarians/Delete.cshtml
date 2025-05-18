@@ -1,0 +1,39 @@
+﻿@model Lab2_DB.Models.Librarian
+
+@{
+    ViewData["Title"] = "Видалення";
+}
+
+<h1>Видалення</h1>
+
+<h3>Ви впевнені, що хочете видалити цей запис?</h3>
+<div>
+    <h4>Бібліотекар</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FullNameLibrarian)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.FullNameLibrarian)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PhoneNumberLibrarian)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PhoneNumberLibrarian)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.EmailLibrarian)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.EmailLibrarian)
+        </dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Видалити" class="btn btn-danger" /> |
+        <a asp-action="Index">Повернутись до списку</a>
+    </form>
+</div>

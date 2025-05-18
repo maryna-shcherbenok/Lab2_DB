@@ -1,0 +1,45 @@
+﻿@model Lab2_DB.Models.Fund
+
+@{
+    ViewData["Title"] = "Видалення";
+}
+
+<h1>Видалення</h1>
+
+<h3>Ви впевнені, що хочете видалити цей запис?</h3>
+<div>
+    <h4>Фонд</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.TitleFund)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.TitleFund)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.TypeFund)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.TypeFund)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.TotalNumberCopies)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.TotalNumberCopies)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.DepartmentFundNavigation)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.DepartmentFundNavigation?.TitleDepartment
+        </dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Видалити" class="btn btn-danger" /> |
+        <a asp-action="Index">Повернутись до списку</a>
+    </form>
+</div>

@@ -1,0 +1,42 @@
+﻿@model Lab2_DB.Models.PublishingHouse
+
+@{
+    ViewData["Title"] = "Деталі";
+}
+
+<h1>Деталі</h1>
+
+<div>
+    <h4>Видавництво</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.TitlePh)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.TitlePh)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PhoneNumberPh)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PhoneNumberPh)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.AddressPh)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.AddressPh)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.EmailPh)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.EmailPh)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Редагувати</a> |
+    <a asp-action="Index">Повернутись до списку</a>
+</div>

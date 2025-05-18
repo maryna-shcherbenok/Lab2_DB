@@ -1,0 +1,51 @@
+﻿@model Lab2_DB.Models.Library
+
+@{
+    ViewData["Title"] = "Видалення";
+}
+
+<h1>Видалення</h1>
+
+<h3>Ви впевнені, що хочете видалити цей запис?</h3>
+<div>
+    <h4>Бібліотека</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.TitleLibrary)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.TitleLibrary)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PhoneNumberLibrary)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PhoneNumberLibrary)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.EmailLibrary)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.EmailLibrary)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.LibraryAddress)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.LibraryAddress)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.LeaderLibrary)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.LeaderLibrary)
+        </dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Видалити" class="btn btn-danger" /> |
+        <a asp-action="Index">Повернутись до списку</a>
+    </form>
+</div>

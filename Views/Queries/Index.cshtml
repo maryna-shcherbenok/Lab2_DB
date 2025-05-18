@@ -1,0 +1,249 @@
+﻿@{
+    ViewData["Title"] = "Запити";
+}
+
+<div class="container mt-4">
+    <h1>Прості запити</h1>
+
+    <div class="row g-3">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">1. Знайти назви книг, що належать до вибраного фонду.</h5>
+                    @using (Html.BeginForm("Query1", "Queries", FormMethod.Post))
+                    {
+                        <div class="input-group">
+                            <select name="TitleFund" class="form-select">
+                                @foreach (var fund in ViewBag.Funds)
+                                {
+                                    <option value="@fund.TitleFund">@fund.TitleFund</option>
+                                }
+                            </select>
+                            <button type="submit" class="btn btn-primary">Пошук</button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">2. Знайти авторів, книги яких видані зазначеним видавництвом.</h5>
+                    @using (Html.BeginForm("Query2", "Queries", FormMethod.Post))
+                    {
+                        <div class="input-group">
+                            <select name="PublisherName" class="form-select">
+                                @foreach (var pub in ViewBag.Publishers)
+                                {
+                                    <option value="@pub.TitlePh">@pub.TitlePh</option>
+                                }
+                            </select>
+                            <button type="submit" class="btn btn-primary">Пошук</button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">3. Знайти читачів, які отримали книгу з заданим ISBN.</h5>
+                    @using (Html.BeginForm("Query3", "Queries", FormMethod.Post))
+                    {
+                        <div class="input-group">
+                            <input type="number" name="ISBN" class="form-control" placeholder="Введіть ISBN" required />
+                            <button type="submit" class="btn btn-primary">Пошук</button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">4. Знайти загальну кількість примірників у фондах обраного відділу.</h5>
+                    @using (Html.BeginForm("Query4", "Queries", FormMethod.Post))
+                    {
+                        <div class="input-group">
+                            <select name="DeptName" class="form-select">
+                                @foreach (var dept in ViewBag.Departments)
+                                {
+                                    <option value="@dept.TitleDepartment">@dept.TitleDepartment</option>
+                                }
+                            </select>
+                            <button type="submit" class="btn btn-primary">Пошук</button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">5. Знайти контактні дані керівника вибраної бібліотеки.</h5>
+                    @using (Html.BeginForm("Query5", "Queries", FormMethod.Post))
+                    {
+                        <div class="input-group">
+                            <select name="LibraryTitle" class="form-select">
+                                @foreach (var lib in ViewBag.Libraries)
+                                {
+                                    <option value="@lib.TitleLibrary">@lib.TitleLibrary</option>
+                                }
+                            </select>
+                            <button type="submit" class="btn btn-primary">Пошук</button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">6. Знайти суму сторінок книг, які НЕ видавались обраному читачу</h5>
+                    @using (Html.BeginForm("Query6", "Queries", FormMethod.Post))
+                    {
+                        <div class="input-group">
+                            <select name="ReaderName" class="form-select">
+                                @foreach (var reader in ViewBag.Readers)
+                                {
+                                    <option value="@reader.FullNameReader">@reader.FullNameReader</option>
+                                }
+                            </select>
+                            <button type="submit" class="btn btn-primary">Пошук</button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h1>Складні запити</h1>
+
+    <div class="row g-3">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">7. Знайти читачів, які отримали ВСІ книги з вибраного фонду.</h5>
+                    @using (Html.BeginForm("Query7", "Queries", FormMethod.Post))
+                    {
+                        <div class="input-group">
+                            <select name="TitleFund" class="form-select">
+                                @foreach (var fund in ViewBag.Funds)
+                                {
+                                    <option value="@fund.TitleFund">@fund.TitleFund</option>
+                                }
+                            </select>
+                            <button type="submit" class="btn btn-primary">Пошук</button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">8. Знайти книги з обраного відділу, які НЕ були видані.</h5>
+                    @using (Html.BeginForm("Query8", "Queries", FormMethod.Post))
+                    {
+                        <div class="input-group">
+                            <select name="DeptName" class="form-select">
+                                @foreach (var dept in ViewBag.Departments)
+                                {
+                                    <option value="@dept.TitleDepartment">@dept.TitleDepartment</option>
+                                }
+                            </select>
+                            <button type="submit" class="btn btn-primary">Пошук</button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">9. Знайти читачів, які брали книги ЛИШЕ ОДНОГО зазначеного автора.</h5>
+                    @using (Html.BeginForm("Query9", "Queries", FormMethod.Post))
+                    {
+                        <div class="input-group">
+                            <select name="AuthorName" class="form-select">
+                                @foreach (var author in ViewBag.Authors)
+                                {
+                                    <option value="@author.FullNameAuthor">
+                                        @author.FullNameAuthor
+                                    </option>
+                                }
+                            </select>
+                            <button type="submit" class="btn btn-primary">Пошук</button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">10. Знайти бібліотекарів, які видали ТОЧНО ті ж книги, що і обраний бібліотекар.</h5>
+                    @using (Html.BeginForm("Query10", "Queries", FormMethod.Post))
+                    {
+                        <div class="input-group">
+                            <select name="LibrarianID" class="form-select">
+                                @foreach (var librarian in ViewBag.Librarians)
+                                {
+                                    <option value="@librarian.Id">@librarian.FullNameLibrarian</option>
+                                }
+                            </select>
+                            <button type="submit" class="btn btn-primary">Пошук</button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">11. Знайти видавництва, що видали ВСІ книги обраного жанру.</h5>
+                    @using (Html.BeginForm("Query11", "Queries", FormMethod.Post))
+                    {
+                        <div class="input-group">
+                            <select name="GenreName" class="form-select">
+                                @foreach (var genre in ViewBag.Genres)
+                                {
+                                    <option value="@genre">@genre</option>
+                                }
+                            </select>
+                            <button type="submit" class="btn btn-primary">Пошук</button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">12. Знайти читачів, які брали ВСІ книги, що й вибраний читач, і ще ДОДАТКОВІ.</h5>
+                    @using (Html.BeginForm("Query12", "Queries", FormMethod.Post))
+                    {
+                        <div class="input-group">
+                            <select name="ReaderId" class="form-select">
+                                @foreach (var reader in ViewBag.Readers)
+                                {
+                                    <option value="@reader.Id">@reader.FullNameReader</option>
+                                }
+                            </select>
+                            <button type="submit" class="btn btn-primary">Пошук</button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

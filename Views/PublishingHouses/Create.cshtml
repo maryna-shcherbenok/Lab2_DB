@@ -1,0 +1,50 @@
+﻿@model Lab2_DB.Models.PublishingHouse
+
+@{
+    ViewData["Title"] = "Створити";
+}
+
+<h1>Створити</h1>
+
+<h4>Видавництво</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="TitlePh" class="control-label"></label>
+                <input asp-for="TitlePh" class="form-control" />
+                <span asp-validation-for="TitlePh" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PhoneNumberPh" class="control-label"></label>
+                <input asp-for="PhoneNumberPh" class="form-control" />
+                <span asp-validation-for="PhoneNumberPh" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AddressPh" class="control-label"></label>
+                <input asp-for="AddressPh" class="form-control" />
+                <span asp-validation-for="AddressPh" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EmailPh" class="control-label"></label>
+                <input asp-for="EmailPh" class="form-control" />
+                <span asp-validation-for="EmailPh" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Створити" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Повернутись до списку</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

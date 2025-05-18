@@ -1,0 +1,20 @@
+﻿@{
+    ViewData["Title"] = "Головна сторінка";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Інформаційна система для адміністрування бібліотек</h1>
+    <p class="lead">Оберіть розділ для перегляду, створення, редагування, видалення:</p>
+
+    <div class="d-flex flex-wrap justify-content-center gap-2 mt-4">
+        <a class="btn btn-outline-primary" asp-controller="Books" asp-action="Index">Книги</a>
+        <a class="btn btn-outline-primary" asp-controller="Readers" asp-action="Index">Читачі</a>
+        <a class="btn btn-outline-primary" asp-controller="Requests" asp-action="Index">Замовлення</a>
+        <a class="btn btn-outline-primary" asp-controller="Authors" asp-action="Index">Автори</a>
+        <a class="btn btn-outline-primary" asp-controller="Librarians" asp-action="Index">Бібліотекарі</a>
+        <a class="btn btn-outline-primary" asp-controller="Funds" asp-action="Index">Фонди</a>
+        <a class="btn btn-outline-primary" asp-controller="Departments" asp-action="Index">Відділи</a>
+        <a class="btn btn-outline-primary" asp-controller="Libraries" asp-action="Index">Бібліотеки</a>
+        <a class="btn btn-outline-primary" asp-controller="PublishingHouses" asp-action="Index">Видавництва</a>
+    </div>
+</div>

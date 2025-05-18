@@ -1,0 +1,46 @@
+﻿@model Lab2_DB.Models.Librarian
+
+@{
+    ViewData["Title"] = "Редагування";
+}
+
+<h1>Редагування</h1>
+
+<h4>Бібліотекар</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="FullNameLibrarian" class="control-label"></label>
+                <input asp-for="FullNameLibrarian" class="form-control" />
+                <span asp-validation-for="FullNameLibrarian" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PhoneNumberLibrarian" class="control-label"></label>
+                <input asp-for="PhoneNumberLibrarian" class="form-control" />
+                <span asp-validation-for="PhoneNumberLibrarian" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EmailLibrarian" class="control-label"></label>
+                <input asp-for="EmailLibrarian" class="form-control" />
+                <span asp-validation-for="EmailLibrarian" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Зберегти" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Повернутись до списку</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

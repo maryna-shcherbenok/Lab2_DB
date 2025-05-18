@@ -1,0 +1,25 @@
+﻿@model IEnumerable<object>
+@{
+    ViewData["Title"] = "Результати запиту 8";
+    var allowed = new[] { "TitleBook" };
+}
+
+<h2>Результати запиту 8</h2>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Книга</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.GetType().GetProperty("TitleBook")?.GetValue(item)</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a class="btn btn-primary mt-3" asp-action="Index" asp-controller="Queries">Назад</a>

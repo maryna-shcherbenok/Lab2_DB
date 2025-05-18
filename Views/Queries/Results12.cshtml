@@ -1,0 +1,36 @@
+﻿@model IEnumerable<object>
+@{
+    ViewData["Title"] = "Результати запиту 12";
+    var props = new[] { "FullNameReader", "EmailReader" };
+}
+
+<h2>Результати запиту 12</h2>
+
+@if (!Model.Any())
+{
+    <div>Обраний читач не має жодної книги або немає відповідних результатів.</div>
+}
+else
+{
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Читач</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    @foreach (var prop in props)
+                    {
+                        <td>@item.GetType().GetProperty(prop)?.GetValue(item)</td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<a class="btn btn-primary mt-3" asp-action="Index" asp-controller="Queries">Назад</a>

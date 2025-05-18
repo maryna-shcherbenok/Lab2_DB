@@ -1,0 +1,86 @@
+﻿@model IEnumerable<Lab2_DB.Models.Book>
+
+@{
+    ViewData["Title"] = "Список книг";
+}
+
+<h1>Список книг</h1>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрити"></button>
+    </div>
+}
+
+<p>
+    <a asp-action="Create">Додати нову</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Isbn)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TitleBook)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GenreBook)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AvailabilityStatusBook)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NumberPages)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AuthorBookNavigation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FundBookNavigation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PublisherBookNavigation)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Isbn)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TitleBook)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.GenreBook)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AvailabilityStatusBook)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NumberPages)
+                </td>
+                <td>
+                    @item.AuthorBookNavigation?.FullNameAuthor
+                </td>
+                <td>
+                    @item.FundBookNavigation?.TitleFund
+                </td>
+                <td>
+                    @item.PublisherBookNavigation?.TitlePh
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Деталі</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

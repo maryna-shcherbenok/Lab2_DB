@@ -1,0 +1,57 @@
+﻿@model Lab2_DB.Models.Request
+
+@{
+    ViewData["Title"] = "Видалення";
+}
+
+<h1>Видалення</h1>
+
+<h3>Ви впевнені, що хочете видалити цей замвлення?</h3>
+<div>
+    <h4>Запит</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.CreationDateRequest)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.CreationDateRequest)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.RequestType)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.RequestType)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.RequestStatus)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.RequestStatus)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Isbn)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Isbn)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.CardNumberReaderNavigation)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.CardNumberReaderNavigation.FullNameReader
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PassNumberLibrarianNavigation)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.PassNumberLibrarianNavigation.FullNameLibrarian
+        </dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Видалити" class="btn btn-danger" /> |
+        <a asp-action="Index">Повернутись до списку</a>
+    </form>
+</div>

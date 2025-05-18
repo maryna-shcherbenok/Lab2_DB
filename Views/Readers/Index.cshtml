@@ -1,0 +1,68 @@
+﻿@model IEnumerable<Lab2_DB.Models.Reader>
+
+@{
+    ViewData["Title"] = "Список читачів";
+}
+
+<h1>Список читачів</h1>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрити"></button>
+    </div>
+}
+
+<p>
+    <a asp-action="Create">Додати нового читача</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FullNameReader)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PhoneNumberReader)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EmailReader)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RoleReader)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PlaceStudyOrWorkReader)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FullNameReader)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PhoneNumberReader)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EmailReader)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RoleReader)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PlaceStudyOrWorkReader)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Деталі</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

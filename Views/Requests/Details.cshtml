@@ -1,0 +1,54 @@
+﻿@model Lab2_DB.Models.Request
+
+@{
+    ViewData["Title"] = "Деталі";
+}
+
+<h1>Деталі</h1>
+
+<div>
+    <h4>Замовлення</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.CreationDateRequest)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.CreationDateRequest)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.RequestType)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.RequestType)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.RequestStatus)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.RequestStatus)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Isbn)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Isbn)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.CardNumberReaderNavigation)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.CardNumberReaderNavigation.FullNameReader
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PassNumberLibrarianNavigation)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.PassNumberLibrarianNavigation.FullNameLibrarian
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Редагувати</a> |
+    <a asp-action="Index">Повернутись до списку</a>
+</div>

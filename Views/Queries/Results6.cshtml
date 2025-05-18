@@ -1,0 +1,18 @@
+﻿@model object
+@{
+    ViewData["Title"] = "Результати запиту 6";
+}
+
+<h2>Результати запиту 6</h2>
+
+@if (ViewBag.PageSum != null && ViewBag.ReaderName != null)
+{
+    <p><strong>Читач:</strong> @ViewBag.ReaderName</p>
+    <h4>Сума сторінок книг, які НЕ були видані цьому читачу: @ViewBag.PageSum</h4>
+}
+else
+{
+    <div>Немає результатів.</div>
+}
+
+<a class="btn btn-primary mt-3" asp-action="Index" asp-controller="Queries">Назад</a>

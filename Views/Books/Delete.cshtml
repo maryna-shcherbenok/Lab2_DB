@@ -1,0 +1,69 @@
+﻿@model Lab2_DB.Models.Book
+
+@{
+    ViewData["Title"] = "Видалення";
+}
+
+<h1>Видалення</h1>
+
+<h3>Ви впевнені, що хочете видалити цю книгу?</h3>
+<div>
+    <h4>Книга</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Isbn)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Isbn)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.TitleBook)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.TitleBook)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.GenreBook)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.GenreBook)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.AvailabilityStatusBook)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.AvailabilityStatusBook)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.NumberPages)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.NumberPages)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.AuthorBookNavigation)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.AuthorBookNavigation?.FullNameAuthor
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FundBookNavigation)
+        </dt>
+        <dd class="col-sm-10">
+            Model.FundBookNavigation?.TitleFund
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PublisherBookNavigation)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.PublisherBookNavigation?.TitlePh
+        </dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Видалити" class="btn btn-danger" /> |
+        <a asp-action="Index">Повернутись до списку</a>
+    </form>
+</div>

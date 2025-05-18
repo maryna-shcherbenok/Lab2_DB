@@ -1,0 +1,42 @@
+﻿@model Lab2_DB.Models.Fund
+
+@{
+    ViewData["Title"] = "Деталі";
+}
+
+<h1>Деталі</h1>
+
+<div>
+    <h4>Фонд</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.TitleFund)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.TitleFund)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.TypeFund)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.TypeFund)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.TotalNumberCopies)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.TotalNumberCopies)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.DepartmentFundNavigation)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.DepartmentFundNavigation?.TitleDepartment
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Редагувати</a> |
+    <a asp-action="Index">Повернутись до списку</a>
+</div>

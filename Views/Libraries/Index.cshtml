@@ -1,0 +1,68 @@
+﻿@model IEnumerable<Lab2_DB.Models.Library>
+
+@{
+    ViewData["Title"] = "Список бібліотек";
+}
+
+<h1>Список бібліотек</h1>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрити"></button>
+    </div>
+}
+
+<p>
+    <a asp-action="Create">Створити нову</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.TitleLibrary)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PhoneNumberLibrary)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EmailLibrary)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LibraryAddress)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LeaderLibrary)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TitleLibrary)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PhoneNumberLibrary)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EmailLibrary)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LibraryAddress)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LeaderLibrary)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Деталі</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
