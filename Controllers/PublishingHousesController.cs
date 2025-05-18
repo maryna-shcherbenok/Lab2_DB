@@ -53,8 +53,9 @@ namespace Lab2_DB.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,TitlePh,PhoneNumberPh,AddressPh,EmailPh")] PublishingHouse publishingHouse)
+        public async Task<IActionResult> Create([Bind("TitlePh,PhoneNumberPh,AddressPh,EmailPh")] PublishingHouse publishingHouse)
         {
+            
             if (ModelState.IsValid)
             {
                 _context.Add(publishingHouse);
@@ -85,7 +86,7 @@ namespace Lab2_DB.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,TitlePh,PhoneNumberPh,AddressPh,EmailPh")] PublishingHouse publishingHouse)
+        public async Task<IActionResult> Edit(int id, [Bind("TitlePh,PhoneNumberPh,AddressPh,EmailPh")] PublishingHouse publishingHouse)
         {
             if (id != publishingHouse.Id)
             {

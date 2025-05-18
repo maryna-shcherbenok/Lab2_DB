@@ -67,9 +67,25 @@ namespace Lab2_DB.Controllers
             if (ModelState.IsValid)
             {
                 _context.Add(request);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(); 
+
+                var book = await _context.Books.FirstOrDefaultAsync(b => b.Isbn == request.Isbn);
+                if (book != null)
+                {
+                    // Створюємо запис у IssuedBooks
+                    var issuedBook = new IssuedBook
+                    {
+                        RequestId = request.Id,
+                        BookId = book.Id
+                    };
+
+                    _context.IssuedBooks.Add(issuedBook);
+                    await _context.SaveChangesAsync();
+                }
+
                 return RedirectToAction(nameof(Index));
             }
+
             ViewData["CardNumberReader"] = new SelectList(_context.Readers, "Id", "FullNameReader", request.CardNumberReader);
             ViewData["PassNumberLibrarian"] = new SelectList(_context.Librarians, "Id", "FullNameLibrarian", request.PassNumberLibrarian);
             ViewData["Isbn"] = new SelectList(_context.Books, "Isbn", "Isbn");
@@ -103,9 +119,7 @@ namespace Lab2_DB.Controllers
         public async Task<IActionResult> Edit(long id, [Bind("Id,PassNumberLibrarian,CardNumberReader,CreationDateRequest,RequestType,RequestStatus,Isbn")] Request request)
         {
             if (id != request.Id)
-            {
                 return NotFound();
-            }
 
             ModelState.Remove("CardNumberReaderNavigation");
             ModelState.Remove("PassNumberLibrarianNavigation");
@@ -116,20 +130,42 @@ namespace Lab2_DB.Controllers
                 {
                     _context.Update(request);
                     await _context.SaveChangesAsync();
+
+                    // Оновлення IssuedBooks
+                    var book = await _context.Books.FirstOrDefaultAsync(b => b.Isbn == request.Isbn);
+                    if (book != null)
+                    {
+                        var issued = await _context.IssuedBooks
+                            .FirstOrDefaultAsync(ib => ib.RequestId == request.Id);
+
+                        if (issued != null)
+                        {
+                            issued.BookId = book.Id;
+                            _context.Update(issued);
+                        }
+                        else
+                        {
+                            _context.IssuedBooks.Add(new IssuedBook
+                            {
+                                RequestId = request.Id,
+                                BookId = book.Id
+                            });
+                        }
+
+                        await _context.SaveChangesAsync();
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!RequestExists(request.Id))
-                    {
                         return NotFound();
-                    }
                     else
-                    {
                         throw;
-                    }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
+
             ViewData["CardNumberReader"] = new SelectList(_context.Readers, "Id", "FullNameReader", request.CardNumberReader);
             ViewData["PassNumberLibrarian"] = new SelectList(_context.Librarians, "Id", "FullNameLibrarian", request.PassNumberLibrarian);
             ViewData["Isbn"] = new SelectList(_context.Books, "Isbn", "Isbn");
@@ -166,14 +202,13 @@ namespace Lab2_DB.Controllers
                 .FirstOrDefaultAsync(r => r.Id == id);
 
             if (request == null)
-            {
                 return NotFound();
-            }
 
+            // Видалення пов’язаних записів у IssuedBooks
             if (request.IssuedBooks.Any())
             {
-                TempData["ErrorMessage"] = "Неможливо видалити запит, оскільки він пов’язаний з виданими книгами.";
-                return RedirectToAction(nameof(Index));
+                _context.IssuedBooks.RemoveRange(request.IssuedBooks);
+                await _context.SaveChangesAsync();
             }
 
             _context.Requests.Remove(request);

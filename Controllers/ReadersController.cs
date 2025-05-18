@@ -67,6 +67,7 @@ namespace Lab2_DB.Controllers
                 ModelState.AddModelError("EmailReader", "Ця електронна пошта вже використовується.");
             }
 
+            reader.Id = 0;
             if (ModelState.IsValid)
             {
                 _context.Add(reader);

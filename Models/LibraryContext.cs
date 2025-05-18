@@ -44,7 +44,7 @@ public partial class LibraryContext : DbContext
         modelBuilder.Entity<Author>(entity =>
         {
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                .ValueGeneratedOnAdd()
                 .HasColumnName("ID");
             entity.Property(e => e.EmailAuthor).HasMaxLength(100);
             entity.Property(e => e.FullNameAuthor).HasMaxLength(100);
@@ -54,13 +54,11 @@ public partial class LibraryContext : DbContext
         modelBuilder.Entity<Book>(entity =>
         {
             entity.HasIndex(e => e.AuthorBook, "IX_Books_AuthorBook");
-
             entity.HasIndex(e => e.FundBook, "IX_Books_FundBook");
-
             entity.HasIndex(e => e.PublisherBook, "IX_Books_PublisherBook");
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                .ValueGeneratedOnAdd()
                 .HasColumnName("ID");
             entity.Property(e => e.AvailabilityStatusBook).HasMaxLength(20);
             entity.Property(e => e.GenreBook).HasMaxLength(50);
@@ -88,7 +86,7 @@ public partial class LibraryContext : DbContext
             entity.HasIndex(e => e.Library, "IX_Departments_Library");
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                .ValueGeneratedOnAdd()
                 .HasColumnName("ID");
             entity.Property(e => e.LeaderDepartment).HasMaxLength(100);
             entity.Property(e => e.TitleDepartment).HasMaxLength(100);
@@ -104,7 +102,7 @@ public partial class LibraryContext : DbContext
             entity.HasIndex(e => e.DepartmentFund, "IX_Funds_DepartmentFund");
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                .ValueGeneratedOnAdd()
                 .HasColumnName("ID");
             entity.Property(e => e.TitleFund).HasMaxLength(100);
             entity.Property(e => e.TypeFund).HasMaxLength(50);
@@ -118,11 +116,10 @@ public partial class LibraryContext : DbContext
         modelBuilder.Entity<IssuedBook>(entity =>
         {
             entity.HasIndex(e => e.BookId, "IX_IssuedBooks_BookID");
-
             entity.HasIndex(e => e.RequestId, "IX_IssuedBooks_RequestID");
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                .ValueGeneratedOnAdd()
                 .HasColumnName("ID");
             entity.Property(e => e.BookId).HasColumnName("BookID");
             entity.Property(e => e.RequestId).HasColumnName("RequestID");
@@ -141,7 +138,7 @@ public partial class LibraryContext : DbContext
         modelBuilder.Entity<Librarian>(entity =>
         {
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                .ValueGeneratedOnAdd()
                 .HasColumnName("ID");
             entity.Property(e => e.EmailLibrarian).HasMaxLength(100);
             entity.Property(e => e.FullNameLibrarian).HasMaxLength(100);
@@ -151,7 +148,7 @@ public partial class LibraryContext : DbContext
         modelBuilder.Entity<Library>(entity =>
         {
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                .ValueGeneratedOnAdd()
                 .HasColumnName("ID");
             entity.Property(e => e.EmailLibrary).HasMaxLength(100);
             entity.Property(e => e.LeaderLibrary).HasMaxLength(100);
@@ -163,26 +160,18 @@ public partial class LibraryContext : DbContext
         modelBuilder.Entity<PublishingHouse>(entity =>
         {
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                .ValueGeneratedOnAdd()
                 .HasColumnName("ID");
-            entity.Property(e => e.AddressPh)
-                .HasMaxLength(150)
-                .HasColumnName("AddressPH");
-            entity.Property(e => e.EmailPh)
-                .HasMaxLength(100)
-                .HasColumnName("EmailPH");
-            entity.Property(e => e.PhoneNumberPh)
-                .HasMaxLength(50)
-                .HasColumnName("PhoneNumberPH");
-            entity.Property(e => e.TitlePh)
-                .HasMaxLength(100)
-                .HasColumnName("TitlePH");
+            entity.Property(e => e.AddressPh).HasMaxLength(150).HasColumnName("AddressPH");
+            entity.Property(e => e.EmailPh).HasMaxLength(100).HasColumnName("EmailPH");
+            entity.Property(e => e.PhoneNumberPh).HasMaxLength(50).HasColumnName("PhoneNumberPH");
+            entity.Property(e => e.TitlePh).HasMaxLength(100).HasColumnName("TitlePH");
         });
 
         modelBuilder.Entity<Reader>(entity =>
         {
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                .ValueGeneratedOnAdd()
                 .HasColumnName("ID");
             entity.Property(e => e.EmailReader).HasMaxLength(100);
             entity.Property(e => e.FullNameReader).HasMaxLength(100);
@@ -194,11 +183,10 @@ public partial class LibraryContext : DbContext
         modelBuilder.Entity<Request>(entity =>
         {
             entity.HasIndex(e => e.CardNumberReader, "IX_Requests_CardNumberReader");
-
             entity.HasIndex(e => e.PassNumberLibrarian, "IX_Requests_PassNumberLibrarian");
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                .ValueGeneratedOnAdd()
                 .HasColumnName("ID");
             entity.Property(e => e.Isbn).HasColumnName("ISBN");
             entity.Property(e => e.RequestStatus).HasMaxLength(20);
