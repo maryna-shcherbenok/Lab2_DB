@@ -1,25 +1,35 @@
 ﻿@model IEnumerable<object>
 @{
     ViewData["Title"] = "Результати запиту 8";
-    var allowed = new[] { "TitleBook" };
+    var dept = ViewBag.DeptName as string ?? "вибраного відділу";
 }
 
 <h2>Результати запиту 8</h2>
 
-<table class="table table-bordered table-striped">
-    <thead>
-        <tr>
-            <th>Книга</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+@if (ViewBag.NoAvailableBooks != null && (bool)ViewBag.NoAvailableBooks)
+{
+    <div class="alert alert-warning">
+        Усі книги з відділу <strong>@dept</strong> вже були видані.
+    </div>
+}
+else
+{
+    <table class="table table-bordered table-striped">
+        <thead>
             <tr>
-                <td>@item.GetType().GetProperty("TitleBook")?.GetValue(item)</td>
+                <th>Книга</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.GetType().GetProperty("TitleBook")?.GetValue(item)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
 
 <a class="btn btn-primary mt-3" asp-action="Index" asp-controller="Queries">Назад</a>
+

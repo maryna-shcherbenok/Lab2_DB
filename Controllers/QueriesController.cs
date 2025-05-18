@@ -87,9 +87,17 @@ namespace Lab2_DB.Controllers
         [HttpPost]
         public IActionResult Query5(string LibraryTitle)
         {
-            var result = _context.Libraries
-                .Where(l => l.TitleLibrary == LibraryTitle)
-                .ToList();
+            var result = (from lib in _context.Libraries
+                          join l in _context.Librarians on lib.LeaderLibrary equals l.FullNameLibrarian
+                          where lib.TitleLibrary == LibraryTitle
+                          select new
+                          {
+                              LibraryName = lib.TitleLibrary,
+                              LeaderName = lib.LeaderLibrary,
+                              LeaderPhone = l.PhoneNumberLibrarian,
+                              LeaderEmail = l.EmailLibrarian
+                          }).ToList<object>();
+
             return View("Results5", result);
         }
 
@@ -123,47 +131,52 @@ namespace Lab2_DB.Controllers
         [HttpPost]
         public IActionResult Query7(string TitleFund)
         {
-            var readers = _context.Readers
-                .FromSqlInterpolated($@"
-                    SELECT r.*
-                    FROM Readers r
-                    WHERE EXISTS (
-                        SELECT 1 FROM Funds f WHERE f.TitleFund = {TitleFund}
-                    )
-                    AND NOT EXISTS (
-                        SELECT b.ID
-                        FROM Books b
-                        JOIN Funds f ON b.FundBook = f.ID
-                        WHERE f.TitleFund = {TitleFund}
-                        AND NOT EXISTS (
-                            SELECT 1
-                            FROM Requests req
-                            JOIN IssuedBooks ib ON req.ID = ib.RequestID
-                            WHERE req.CardNumberReader = r.ID
-                            AND ib.BookID = b.ID
-                        )
-                    )")
+            // Знаходимо ID всіх книг із обраного фонду
+            var fundBookIds = _context.Books
+                .Where(b => b.FundBookNavigation.TitleFund == TitleFund)
+                .Select(b => b.Id)
                 .ToList();
+
+            // Якщо у фонді немає жодної книги, то повертаємо повідомлення
+            if (!fundBookIds.Any())
+            {
+                ViewBag.NoBooksInFund = true;
+                ViewBag.FundName = TitleFund;
+                return View("Results7", new List<object>());
+            }
+
+            // Читачі, які отримали всі книги з фонду
+            var readers = _context.Readers
+                .Where(r =>
+                    !fundBookIds.Except(
+                        _context.IssuedBooks
+                            .Where(ib => ib.Request.CardNumberReader == r.Id)
+                            .Select(ib => ib.BookId)
+                    ).Any()
+                )
+                .Select(r => new { r.FullNameReader })
+                .ToList<object>();
+
+            ViewBag.FundName = TitleFund;
             return View("Results7", readers);
         }
 
         [HttpPost]
         public IActionResult Query8(string DeptName)
         {
-            var books = _context.Books
-                .FromSqlInterpolated($@"
-                    SELECT b.*
-                    FROM Books b
-                    WHERE NOT EXISTS (
-                        SELECT 1 FROM IssuedBooks ib WHERE ib.BookID = b.ID
-                    )
-                    AND b.FundBook IN (
-                        SELECT f.ID
-                        FROM Funds f
-                        JOIN Departments d ON f.DepartmentFund = d.ID
-                        WHERE d.TitleDepartment = {DeptName}
-                    )")
-                .ToList();
+            // Обираємо назви книг, які належать до фондів обраного відділу і ще не були видані
+            var books = (
+                from b in _context.Books
+                join f in _context.Funds on b.FundBook equals f.Id
+                join d in _context.Departments on f.DepartmentFund equals d.Id
+                where d.TitleDepartment == DeptName
+                where !_context.IssuedBooks.Any(ib => ib.BookId == b.Id)
+                select new { b.TitleBook }
+            ).ToList<object>();
+
+            ViewBag.DeptName = DeptName;
+            ViewBag.NoAvailableBooks = books.Count == 0;
+
             return View("Results8", books);
         }
 
@@ -235,26 +248,35 @@ namespace Lab2_DB.Controllers
         }
 
         [HttpPost]
-        public IActionResult Query11(string GenreName)
+        public IActionResult Query11(long ReaderId)
         {
-            var publishers = _context.PublishingHouses
-                .FromSqlInterpolated($@"
-                    SELECT p.*
-                    FROM PublishingHouses p
-                    WHERE NOT EXISTS (
-                        SELECT 1
-                        FROM Books b
-                        WHERE b.GenreBook = {GenreName}
-                        AND b.PublisherBook <> p.ID
-                    )
-                    AND EXISTS (
-                        SELECT 1
-                        FROM Books b2
-                        WHERE b2.GenreBook = {GenreName}
-                        AND b2.PublisherBook = p.ID
-                    )")
+            var referenceBookIds = _context.Requests
+                .Where(r => r.CardNumberReader == ReaderId)
+                .SelectMany(r => r.IssuedBooks)
+                .Select(ib => ib.BookId)
+                .Distinct()
                 .ToList();
-            return View("Results11", publishers);
+
+            if (!referenceBookIds.Any())
+            {
+                ViewBag.NoBooks = true;
+                return View("Results11", new List<object>());
+            }
+
+            var readers = _context.Readers
+                .Where(r => r.Id != ReaderId)
+                .Where(r => !referenceBookIds.Except(
+                    _context.Requests
+                        .Where(req => req.CardNumberReader == r.Id)
+                        .SelectMany(req => req.IssuedBooks)
+                        .Select(ib => ib.BookId)
+                ).Any())
+                .Select(r => new { r.FullNameReader })
+                .ToList<object>();
+
+            ViewBag.SourceReaderId = ReaderId;
+            ViewBag.NoResults = readers.Count == 0;
+            return View("Results11", readers);
         }
 
         [HttpPost]

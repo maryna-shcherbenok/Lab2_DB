@@ -8,11 +8,18 @@
 
 @if (!Model.Any())
 {
-    <div>Обраний читач не має жодної книги або немає відповідних результатів.</div>
+    <div class="alert alert-warning mt-3">
+        <h5>Немає результатів</h5>
+        <p>
+            Обраний читач ще <strong>не замовляли жодної книги</strong>, або ж <strong>жоден інший читач</strong> не має повного перетину та додаткових книг.
+        </p>
+    </div>
 }
 else
 {
-    <table class="table table-bordered table-striped">
+    <p>Нижче наведено список читачів, які замовляли <strong>всі книги, що й обраний читач</strong>, і щонайменше <strong>одну додаткову</strong> книгу:</p>
+
+    <table class="table table-bordered table-striped mt-3">
         <thead>
             <tr>
                 <th>Читач</th>

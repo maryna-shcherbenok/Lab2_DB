@@ -53,7 +53,7 @@ namespace Lab2_DB.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FullNameReader,PhoneNumberReader,EmailReader,RoleReader,PlaceStudyOrWorkReader")] Reader reader)
+        public async Task<IActionResult> Create([Bind("FullNameReader,PhoneNumberReader,EmailReader,RoleReader,PlaceStudyOrWorkReader")] Reader reader)
         {
             // Перевірка унікальності телефону
             if (await _context.Readers.AnyAsync(r => r.PhoneNumberReader == reader.PhoneNumberReader))
@@ -138,6 +138,7 @@ namespace Lab2_DB.Controllers
             }
             return View(reader);
         }
+
 
         // GET: Readers/Delete/5
         public async Task<IActionResult> Delete(long? id)

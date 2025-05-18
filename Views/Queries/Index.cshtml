@@ -104,7 +104,7 @@
         <div class="col-md-6">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <h5 class="card-title">6. Знайти суму сторінок книг, які НЕ видавались обраному читачу</h5>
+                    <h5 class="card-title">6. Знайти суму сторінок книг, які НЕ замовлялися цим читачем.</h5>
                     @using (Html.BeginForm("Query6", "Queries", FormMethod.Post))
                     {
                         <div class="input-group">
@@ -128,7 +128,7 @@
         <div class="col-md-6">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <h5 class="card-title">7. Знайти читачів, які отримали ВСІ книги з вибраного фонду.</h5>
+                    <h5 class="card-title">7. Знайти читачів, які замовляли ВСІ книги у базі даних з вибраного фонду.</h5>
                     @using (Html.BeginForm("Query7", "Queries", FormMethod.Post))
                     {
                         <div class="input-group">
@@ -148,7 +148,7 @@
         <div class="col-md-6">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <h5 class="card-title">8. Знайти книги з обраного відділу, які НЕ були видані.</h5>
+                    <h5 class="card-title">8. Знайти книги з обраного відділу, які НІКОЛИ НЕ замовлялися.</h5>
                     @using (Html.BeginForm("Query8", "Queries", FormMethod.Post))
                     {
                         <div class="input-group">
@@ -210,14 +210,14 @@
         <div class="col-md-6">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <h5 class="card-title">11. Знайти видавництва, що видали ВСІ книги обраного жанру.</h5>
+                    <h5 class="card-title">11. Знайти читачів, які отримали принаймні всі ті книги, які отримав обраний читач.</h5>
                     @using (Html.BeginForm("Query11", "Queries", FormMethod.Post))
                     {
                         <div class="input-group">
-                            <select name="GenreName" class="form-select">
-                                @foreach (var genre in ViewBag.Genres)
+                            <select name="ReaderId" class="form-select">
+                                @foreach (var reader in ViewBag.Readers)
                                 {
-                                    <option value="@genre">@genre</option>
+                                    <option value="@reader.Id">@reader.FullNameReader</option>
                                 }
                             </select>
                             <button type="submit" class="btn btn-primary">Пошук</button>
@@ -226,6 +226,7 @@
                 </div>
             </div>
         </div>
+
         <div class="col-md-6">
             <div class="card shadow-sm">
                 <div class="card-body">

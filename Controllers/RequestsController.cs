@@ -59,7 +59,7 @@ namespace Lab2_DB.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,PassNumberLibrarian,CardNumberReader,CreationDateRequest,RequestType,RequestStatus,Isbn")] Request request)
+        public async Task<IActionResult> Create([Bind("PassNumberLibrarian,CardNumberReader,CreationDateRequest,RequestType,RequestStatus,Isbn")] Request request)
         {
             ModelState.Remove("CardNumberReaderNavigation");
             ModelState.Remove("PassNumberLibrarianNavigation");

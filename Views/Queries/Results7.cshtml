@@ -1,25 +1,40 @@
 ﻿@model IEnumerable<object>
 @{
     ViewData["Title"] = "Результати запиту 7";
-    var allowed = new[] { "FullNameReader" };
+    string fundName = ViewBag.FundName as string ?? "вибраного фонду";
 }
 
 <h2>Результати запиту 7</h2>
 
-<table class="table table-bordered table-striped">
-    <thead>
-        <tr>
-            <th>Читач</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+@if (ViewBag.NoBooksInFund != null && (bool)ViewBag.NoBooksInFund)
+{
+    <div class="alert alert-warning">
+        У фонді <strong>@fundName</strong> немає жодної книги.
+    </div>
+}
+else if (!Model.Any())
+{
+    <div class="alert alert-info">
+        Жоден читач не отримав усі книги з фонду <strong>@fundName</strong>.
+    </div>
+}
+else
+{
+    <table class="table table-bordered table-striped">
+        <thead>
             <tr>
-                <td>@item.GetType().GetProperty("FullNameReader")?.GetValue(item)</td>
+                <th>Читач</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.GetType().GetProperty("FullNameReader")?.GetValue(item)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
 
 <a class="btn btn-primary mt-3" asp-action="Index" asp-controller="Queries">Назад</a>

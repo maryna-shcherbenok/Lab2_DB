@@ -1,25 +1,37 @@
 ﻿@model IEnumerable<object>
 @{
     ViewData["Title"] = "Результати запиту 11";
-    var props = new[] { "TitlePH" };
 }
 
-<h2>Результати запиту 11</h2>
+<h2>Результати запиту 13</h2>
 
-<table class="table table-bordered table-striped">
-    <thead>
-        <tr>
-            <th>Видавництво</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.GetType().GetProperty("TitlePH")?.GetValue(item)</td>
-            </tr>
-        }
-    </tbody>
-</table>
+@if (ViewBag.NoBooks != null && (bool)ViewBag.NoBooks)
+{
+    <div class="alert alert-warning">
+        Вибраний читач ще не замовляли жодної книги.
+    </div>
+}
+else if (ViewBag.NoResults != null && (bool)ViewBag.NoResults)
+{
+    <div class="alert alert-info">
+        Немає читачів, які замовляли принаймні всі ті книги, що й обраний.
+    </div>
+}
+else
+{
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr><th>Читач</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.GetType().GetProperty("FullNameReader")?.GetValue(item)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
 
 <a class="btn btn-primary mt-3" asp-action="Index" asp-controller="Queries">Назад</a>
