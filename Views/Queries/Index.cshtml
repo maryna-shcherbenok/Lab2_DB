@@ -9,7 +9,7 @@
         <div class="col-md-6">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <h5 class="card-title">1. Знайти назви книг, що належать до вибраного фонду.</h5>
+                    <h5 class="card-title">1. Знайти дані про книги, що НЕ належать до вибраного фонду.</h5>
                     @using (Html.BeginForm("Query1", "Queries", FormMethod.Post))
                     {
                         <div class="input-group">
@@ -29,7 +29,7 @@
         <div class="col-md-6">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <h5 class="card-title">2. Знайти авторів, книги яких видані зазначеним видавництвом.</h5>
+                    <h5 class="card-title">2. Знайти авторів та кількість їхніх книг, які видані зазначеним видавництвом.</h5>
                     @using (Html.BeginForm("Query2", "Queries", FormMethod.Post))
                     {
                         <div class="input-group">
@@ -49,7 +49,7 @@
         <div class="col-md-6">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <h5 class="card-title">3. Знайти читачів, які отримали книгу з заданим ISBN.</h5>
+                    <h5 class="card-title">3. Знайти читачів, які замовляли книгу з заданим ISBN, кількість сторінок яких більше 400.</h5>
                     @using (Html.BeginForm("Query3", "Queries", FormMethod.Post))
                     {
                         <div class="input-group">
@@ -64,7 +64,7 @@
         <div class="col-md-6">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <h5 class="card-title">4. Знайти загальну кількість примірників у фондах обраного відділу.</h5>
+                    <h5 class="card-title">4. Знайти назву відділу, назву бібліотеки та загальну кількість примірників у фондах обраного відділу.</h5>
                     @using (Html.BeginForm("Query4", "Queries", FormMethod.Post))
                     {
                         <div class="input-group">
@@ -148,14 +148,14 @@
         <div class="col-md-6">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <h5 class="card-title">8. Знайти книги з обраного відділу, які НІКОЛИ НЕ замовлялися.</h5>
+                    <h5 class="card-title">8. Знайти читачів, які замовили ВСІ ті книги, що й заданий читач, і ОБОВ'ЯЗКОВО ЩЕ якісь</h5>
                     @using (Html.BeginForm("Query8", "Queries", FormMethod.Post))
                     {
                         <div class="input-group">
-                            <select name="DeptName" class="form-select">
-                                @foreach (var dept in ViewBag.Departments)
+                            <select name="ReaderId" class="form-select">
+                                @foreach (var reader in ViewBag.Readers)
                                 {
-                                    <option value="@dept.TitleDepartment">@dept.TitleDepartment</option>
+                                    <option value="@reader.Id">@reader.FullNameReader</option>
                                 }
                             </select>
                             <button type="submit" class="btn btn-primary">Пошук</button>
@@ -190,48 +190,8 @@
         <div class="col-md-6">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <h5 class="card-title">10. Знайти бібліотекарів, які видали ТОЧНО ті ж книги, що і обраний бібліотекар.</h5>
+                    <h5 class="card-title">10. Знайти читачів, які мають хоча б одну спільну книгу із заданим читачем. </h5>
                     @using (Html.BeginForm("Query10", "Queries", FormMethod.Post))
-                    {
-                        <div class="input-group">
-                            <select name="LibrarianID" class="form-select">
-                                @foreach (var librarian in ViewBag.Librarians)
-                                {
-                                    <option value="@librarian.Id">@librarian.FullNameLibrarian</option>
-                                }
-                            </select>
-                            <button type="submit" class="btn btn-primary">Пошук</button>
-                        </div>
-                    }
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">11. Знайти читачів, які отримали принаймні всі ті книги, які отримав обраний читач.</h5>
-                    @using (Html.BeginForm("Query11", "Queries", FormMethod.Post))
-                    {
-                        <div class="input-group">
-                            <select name="ReaderId" class="form-select">
-                                @foreach (var reader in ViewBag.Readers)
-                                {
-                                    <option value="@reader.Id">@reader.FullNameReader</option>
-                                }
-                            </select>
-                            <button type="submit" class="btn btn-primary">Пошук</button>
-                        </div>
-                    }
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">12. Знайти читачів, які брали ВСІ книги, що й вибраний читач, і ще ДОДАТКОВІ.</h5>
-                    @using (Html.BeginForm("Query12", "Queries", FormMethod.Post))
                     {
                         <div class="input-group">
                             <select name="ReaderId" class="form-select">

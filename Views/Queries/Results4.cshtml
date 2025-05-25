@@ -5,14 +5,31 @@
 
 <h2>Результати запиту 4</h2>
 
-@if (ViewBag.TotalCopies != null)
+@if (!Model.Any())
 {
-    <p><strong>Відділ:</strong> @ViewBag.TitleDepartment</p>
-    <h4>Загальна кількість примірників: @ViewBag.TotalCopies</h4>
+    <p>Немає даних для відображення.</p>
 }
 else
 {
-    <div>Немає результатів.</div>
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Відділ</th>
+                <th>Бібліотека</th>
+                <th>Загальна кількість примірників</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.GetType().GetProperty("TitleDepartment")?.GetValue(item)</td>
+                    <td>@item.GetType().GetProperty("TitleLibrary")?.GetValue(item)</td>
+                    <td>@item.GetType().GetProperty("TotalCopies")?.GetValue(item)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }
 
 <a class="btn btn-primary mt-3" asp-action="Index" asp-controller="Queries">Назад</a>

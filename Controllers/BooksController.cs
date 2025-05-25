@@ -89,17 +89,26 @@ namespace Lab2_DB.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                TempData["Error"] = "ID книги не вказано.";
+                return RedirectToAction(nameof(Index));
             }
 
-            var book = await _context.Books.FindAsync(id);
+            var book = await _context.Books
+                .Include(b => b.AuthorBookNavigation)
+                .Include(b => b.FundBookNavigation)
+                .Include(b => b.PublisherBookNavigation)
+                .FirstOrDefaultAsync(b => b.Id == id);
+
             if (book == null)
             {
-                return NotFound();
+                TempData["Error"] = "Книгу не знайдено.";
+                return RedirectToAction(nameof(Index));
             }
+
             ViewData["AuthorBook"] = new SelectList(_context.Authors, "Id", "FullNameAuthor", book.AuthorBook);
             ViewData["FundBook"] = new SelectList(_context.Funds, "Id", "TitleFund", book.FundBook);
             ViewData["PublisherBook"] = new SelectList(_context.PublishingHouses, "Id", "TitlePh", book.PublisherBook);
+
             return View(book);
         }
 
@@ -112,7 +121,8 @@ namespace Lab2_DB.Controllers
         {
             if (id != book.Id)
             {
-                return NotFound();
+                TempData["Error"] = "ID книги не співпадає.";
+                return RedirectToAction(nameof(Index));
             }
 
             ModelState.Remove("AuthorBookNavigation");
@@ -128,23 +138,66 @@ namespace Lab2_DB.Controllers
             {
                 try
                 {
-                    _context.Update(book);
+                    // Завантажуємо існуючу книгу
+                    var existingBook = await _context.Books
+                        .FirstOrDefaultAsync(b => b.Id == id);
+
+                    if (existingBook == null)
+                    {
+                        TempData["Error"] = "Книгу не знайдено.";
+                        return RedirectToAction(nameof(Index));
+                    }
+
+                    // Зберігаємо старий ISBN для оновлення в Requests
+                    var oldISBN = existingBook.Isbn;
+
+                    // Оновлюємо дані книги
+                    existingBook.TitleBook = book.TitleBook;
+                    existingBook.Isbn = book.Isbn;
+                    existingBook.GenreBook = book.GenreBook;
+                    existingBook.NumberPages = book.NumberPages;
+                    existingBook.AvailabilityStatusBook = book.AvailabilityStatusBook;
+                    existingBook.AuthorBook = book.AuthorBook;
+                    existingBook.FundBook = book.FundBook;
+                    existingBook.PublisherBook = book.PublisherBook;
+
+                    // Оновлюємо ISBN у пов’язаних записах Requests
+                    if (oldISBN != book.Isbn)
+                    {
+                        var relatedRequests = await _context.Requests
+                            .Where(r => r.Isbn == oldISBN)
+                            .ToListAsync();
+
+                        foreach (var request in relatedRequests)
+                        {
+                            request.Isbn = book.Isbn;
+                        }
+                    }
+
                     await _context.SaveChangesAsync();
+
+                    TempData["Message"] = $"Книгу {book.TitleBook} успішно оновлено.";
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!BookExists(book.Id))
                     {
-                        return NotFound();
+                        TempData["Error"] = "Книгу не знайдено.";
+                        return RedirectToAction(nameof(Index));
                     }
                     else
                     {
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                catch (Exception ex)
+                {
+                    TempData["Error"] = $"Помилка при оновленні книги: {ex.Message}";
+                }
             }
 
+            // Якщо ModelState не валідний, повертаємо форму з помилками
             ViewData["AuthorBook"] = new SelectList(_context.Authors, "Id", "FullNameAuthor", book.AuthorBook);
             ViewData["FundBook"] = new SelectList(_context.Funds, "Id", "TitleFund", book.FundBook);
             ViewData["PublisherBook"] = new SelectList(_context.PublishingHouses, "Id", "TitlePh", book.PublisherBook);
@@ -156,7 +209,8 @@ namespace Lab2_DB.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                TempData["Error"] = "ID книги не вказано.";
+                return RedirectToAction(nameof(Index));
             }
 
             var book = await _context.Books
@@ -164,9 +218,11 @@ namespace Lab2_DB.Controllers
                 .Include(b => b.FundBookNavigation)
                 .Include(b => b.PublisherBookNavigation)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (book == null)
             {
-                return NotFound();
+                TempData["Error"] = "Книгу не знайдено.";
+                return RedirectToAction(nameof(Index));
             }
 
             return View(book);
@@ -177,25 +233,49 @@ namespace Lab2_DB.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var book = await _context.Books
-                .Include(b => b.IssuedBooks)
-                .FirstOrDefaultAsync(b => b.Id == id);
-
-            if (book == null)
+            try
             {
-                return NotFound();
-            }
+                var book = await _context.Books
+                    .FirstOrDefaultAsync(b => b.Id == id);
 
-            if (book.IssuedBooks.Any())
-            {
-                TempData["ErrorMessage"] = "Неможливо видалити книгу, оскільки вона пов’язана з виданими запитами.";
+                if (book == null)
+                {
+                    TempData["Error"] = "Книгу не знайдено.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                // Знаходимо всі запити, пов’язані з книгою через ISBN
+                var relatedRequests = await _context.Requests
+                    .Include(r => r.IssuedBooks)
+                    .Where(r => r.Isbn == book.Isbn)
+                    .ToListAsync();
+
+                // Видаляємо пов’язані записи
+                foreach (var request in relatedRequests)
+                {
+                    // Видаляємо IssuedBooks, пов’язані з Request
+                    foreach (var issuedBook in request.IssuedBooks)
+                    {
+                        _context.IssuedBooks.Remove(issuedBook);
+                    }
+                    // Видаляємо сам Request
+                    _context.Requests.Remove(request);
+                }
+
+                // Видаляємо книгу
+                _context.Books.Remove(book);
+                await _context.SaveChangesAsync();
+
+                TempData["Message"] = $"Книгу {book.TitleBook} успішно видалено разом із пов’язаними запитами та видачами.";
                 return RedirectToAction(nameof(Index));
             }
-
-            _context.Books.Remove(book);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            catch (Exception ex)
+            {
+                TempData["Error"] = $"Помилка при видаленні книги: {ex.Message}";
+                return RedirectToAction(nameof(Index));
+            }
         }
+
 
         private bool BookExists(long id)
         {

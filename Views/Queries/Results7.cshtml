@@ -1,21 +1,20 @@
 ﻿@model IEnumerable<object>
 @{
     ViewData["Title"] = "Результати запиту 7";
-    string fundName = ViewBag.FundName as string ?? "вибраного фонду";
 }
 
 <h2>Результати запиту 7</h2>
 
-@if (ViewBag.NoBooksInFund != null && (bool)ViewBag.NoBooksInFund)
+@if (ViewBag.NoBooksInFund != null && ViewBag.NoBooksInFund)
 {
-    <div class="alert alert-warning">
-        У фонді <strong>@fundName</strong> немає жодної книги.
+    <div class="alert alert-info" role="alert">
+        У фонді "@ViewBag.FundName" немає жодної книги.
     </div>
 }
 else if (!Model.Any())
 {
-    <div class="alert alert-info">
-        Жоден читач не отримав усі книги з фонду <strong>@fundName</strong>.
+    <div class="alert alert-info" role="alert">
+        Немає читачів, які взяли всі книги з фонду "@ViewBag.FundName".
     </div>
 }
 else

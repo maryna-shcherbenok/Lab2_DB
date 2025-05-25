@@ -1,25 +1,45 @@
 ﻿@model IEnumerable<object>
 @{
     ViewData["Title"] = "Результати запиту 10";
-    var props = new[] { "FullNameLibrarian" };
 }
 
 <h2>Результати запиту 10</h2>
 
-<table class="table table-bordered table-striped">
-    <thead>
-        <tr>
-            <th>Бібліотекар</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+@if (ViewBag.NoBooks != null && (bool)ViewBag.NoBooks)
+{
+    <div class="alert alert-warning" role="alert">
+        Вибраний читач ще не замовляв жодної книги.
+    </div>
+}
+else if (ViewBag.NoResults != null && (bool)ViewBag.NoResults)
+{
+    <div class="alert alert-info" role="alert">
+        Немає потрібних читачів.
+    </div>
+}
+else if (!Model.Any())
+{
+    <div class="alert alert-info" role="alert">
+        Немає результатів.
+    </div>
+}
+else
+{
+    <table class="table table-bordered table-striped">
+        <thead>
             <tr>
-                <td>@item.GetType().GetProperty("FullNameLibrarian")?.GetValue(item)</td>
+                <th>Читач</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.GetType().GetProperty("FullNameReader")?.GetValue(item)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
 
 <a class="btn btn-primary mt-3" asp-action="Index" asp-controller="Queries">Назад</a>

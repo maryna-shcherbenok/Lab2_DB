@@ -7,12 +7,20 @@
 
 @if (ViewBag.PageSum != null && ViewBag.ReaderName != null)
 {
-    <p><strong>Читач:</strong> @ViewBag.ReaderName</p>
-    <h4>Сума сторінок книг, які НЕ замовлялися цим читачем: @ViewBag.PageSum</h4>
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Читач: @ViewBag.ReaderName</h4>
+            <p class="card-text">
+                <strong>Сума сторінок книг, які НЕ замовлялися цим читачем:</strong> @ViewBag.PageSum
+            </p>
+        </div>
+    </div>
 }
 else
 {
-    <div>Немає результатів.</div>
+    <div class="alert alert-info" role="alert">
+        Немає результатів.
+    </div>
 }
 
 <a class="btn btn-primary mt-3" asp-action="Index" asp-controller="Queries">Назад</a>

@@ -1,25 +1,33 @@
 ﻿@model IEnumerable<object>
 @{
     ViewData["Title"] = "Результати запиту 3";
-    var allowedProperties = new[] { "FullNameReader" };
 }
 
 <h2>Результати запиту 3</h2>
 
-<table class="table table-bordered table-striped">
-    <thead>
-        <tr>
-            <th>Читач</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+@if (!Model.Any())
+{
+    <p>Немає даних для відображення.</p>
+}
+else
+{
+    <table class="table table-bordered table-striped">
+        <thead>
             <tr>
-                <td>@item.GetType().GetProperty("FullNameReader")?.GetValue(item)</td>
+                <th>Читач</th>
+                <th>Загальна кількість запитів</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.GetType().GetProperty("FullNameReader")?.GetValue(item)</td>
+                    <td>@item.GetType().GetProperty("TotalRequests")?.GetValue(item)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
 
 <a class="btn btn-primary mt-3" asp-action="Index" asp-controller="Queries">Назад</a>

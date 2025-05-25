@@ -97,14 +97,17 @@ namespace Lab2_DB.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                TempData["Error"] = "ID запиту не вказано.";
+                return RedirectToAction(nameof(Index));
             }
 
             var request = await _context.Requests.FindAsync(id);
             if (request == null)
             {
-                return NotFound();
+                TempData["Error"] = "Запит не знайдено.";
+                return RedirectToAction(nameof(Index));
             }
+
             ViewData["CardNumberReader"] = new SelectList(_context.Readers, "Id", "FullNameReader", request.CardNumberReader);
             ViewData["PassNumberLibrarian"] = new SelectList(_context.Librarians, "Id", "FullNameLibrarian", request.PassNumberLibrarian);
             ViewData["Isbn"] = new SelectList(_context.Books, "Isbn", "Isbn");
@@ -119,7 +122,10 @@ namespace Lab2_DB.Controllers
         public async Task<IActionResult> Edit(long id, [Bind("Id,PassNumberLibrarian,CardNumberReader,CreationDateRequest,RequestType,RequestStatus,Isbn")] Request request)
         {
             if (id != request.Id)
-                return NotFound();
+            {
+                TempData["Error"] = "ID запиту не співпадає.";
+                return RedirectToAction(nameof(Index));
+            }
 
             ModelState.Remove("CardNumberReaderNavigation");
             ModelState.Remove("PassNumberLibrarianNavigation");
@@ -128,8 +134,23 @@ namespace Lab2_DB.Controllers
             {
                 try
                 {
-                    _context.Update(request);
-                    await _context.SaveChangesAsync();
+                    // Завантажуємо існуючий запит
+                    var existingRequest = await _context.Requests
+                        .FirstOrDefaultAsync(r => r.Id == id);
+
+                    if (existingRequest == null)
+                    {
+                        TempData["Error"] = "Запит не знайдено.";
+                        return RedirectToAction(nameof(Index));
+                    }
+
+                    // Оновлюємо дані запиту
+                    existingRequest.PassNumberLibrarian = request.PassNumberLibrarian;
+                    existingRequest.CardNumberReader = request.CardNumberReader;
+                    existingRequest.CreationDateRequest = request.CreationDateRequest;
+                    existingRequest.RequestType = request.RequestType;
+                    existingRequest.RequestStatus = request.RequestStatus;
+                    existingRequest.Isbn = request.Isbn;
 
                     // Оновлення IssuedBooks
                     var book = await _context.Books.FirstOrDefaultAsync(b => b.Isbn == request.Isbn);
@@ -151,19 +172,29 @@ namespace Lab2_DB.Controllers
                                 BookId = book.Id
                             });
                         }
-
-                        await _context.SaveChangesAsync();
                     }
+
+                    await _context.SaveChangesAsync();
+
+                    TempData["Message"] = $"Запит успішно оновлено.";
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!RequestExists(request.Id))
-                        return NotFound();
+                    {
+                        TempData["Error"] = "Запит не знайдено.";
+                        return RedirectToAction(nameof(Index));
+                    }
                     else
+                    {
                         throw;
+                    }
                 }
-
-                return RedirectToAction(nameof(Index));
+                catch (Exception ex)
+                {
+                    TempData["Error"] = $"Помилка при оновленні запиту: {ex.Message}";
+                }
             }
 
             ViewData["CardNumberReader"] = new SelectList(_context.Readers, "Id", "FullNameReader", request.CardNumberReader);
@@ -177,16 +208,19 @@ namespace Lab2_DB.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                TempData["Error"] = "ID запиту не вказано.";
+                return RedirectToAction(nameof(Index));
             }
 
             var request = await _context.Requests
                 .Include(r => r.CardNumberReaderNavigation)
                 .Include(r => r.PassNumberLibrarianNavigation)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (request == null)
             {
-                return NotFound();
+                TempData["Error"] = "Запит не знайдено.";
+                return RedirectToAction(nameof(Index));
             }
 
             return View(request);
@@ -197,23 +231,34 @@ namespace Lab2_DB.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var request = await _context.Requests
-                .Include(r => r.IssuedBooks)
-                .FirstOrDefaultAsync(r => r.Id == id);
-
-            if (request == null)
-                return NotFound();
-
-            // Видалення пов’язаних записів у IssuedBooks
-            if (request.IssuedBooks.Any())
+            try
             {
-                _context.IssuedBooks.RemoveRange(request.IssuedBooks);
-                await _context.SaveChangesAsync();
-            }
+                var request = await _context.Requests
+                    .Include(r => r.IssuedBooks)
+                    .FirstOrDefaultAsync(r => r.Id == id);
 
-            _context.Requests.Remove(request);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+                if (request == null)
+                {
+                    TempData["Error"] = "Запит не знайдено.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                foreach (var issuedBook in request.IssuedBooks)
+                {
+                    _context.IssuedBooks.Remove(issuedBook);
+                }
+
+                _context.Requests.Remove(request);
+                await _context.SaveChangesAsync();
+
+                TempData["Message"] = "Запит успішно видалено разом із пов’язаними видачами.";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = $"Помилка при видаленні запиту: {ex.Message}";
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         private bool RequestExists(long id)

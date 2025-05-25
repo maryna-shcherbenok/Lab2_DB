@@ -82,14 +82,17 @@ namespace Lab2_DB.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                TempData["Error"] = "ID бібліотекаря не вказано.";
+                return RedirectToAction(nameof(Index));
             }
 
             var librarian = await _context.Librarians.FindAsync(id);
             if (librarian == null)
             {
-                return NotFound();
+                TempData["Error"] = "Бібліотекаря не знайдено.";
+                return RedirectToAction(nameof(Index));
             }
+
             return View(librarian);
         }
 
@@ -102,7 +105,8 @@ namespace Lab2_DB.Controllers
         {
             if (id != librarian.Id)
             {
-                return NotFound();
+                TempData["Error"] = "ID бібліотекаря не співпадає.";
+                return RedirectToAction(nameof(Index));
             }
 
             // Перевірка унікальності номера телефону (окрім поточного бібліотекаря)
@@ -123,19 +127,26 @@ namespace Lab2_DB.Controllers
                 {
                     _context.Update(librarian);
                     await _context.SaveChangesAsync();
+
+                    TempData["Message"] = $"Бібліотекаря {librarian.FullNameLibrarian} успішно оновлено.";
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!LibrarianExists(librarian.Id))
                     {
-                        return NotFound();
+                        TempData["Error"] = "Бібліотекаря не знайдено.";
+                        return RedirectToAction(nameof(Index));
                     }
                     else
                     {
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                catch (Exception ex)
+                {
+                    TempData["Error"] = $"Помилка при оновленні бібліотекаря: {ex.Message}";
+                }
             }
 
             return View(librarian);
@@ -146,14 +157,17 @@ namespace Lab2_DB.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                TempData["Error"] = "ID бібліотекаря не вказано.";
+                return RedirectToAction(nameof(Index));
             }
 
             var librarian = await _context.Librarians
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (librarian == null)
             {
-                return NotFound();
+                TempData["Error"] = "Бібліотекаря не знайдено.";
+                return RedirectToAction(nameof(Index));
             }
 
             return View(librarian);
@@ -164,24 +178,39 @@ namespace Lab2_DB.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var librarian = await _context.Librarians
-                .Include(l => l.Requests)
-                .FirstOrDefaultAsync(l => l.Id == id);
-
-            if (librarian == null)
+            try
             {
-                return NotFound();
-            }
+                var librarian = await _context.Librarians
+                    .Include(l => l.Requests)
+                    .ThenInclude(req => req.IssuedBooks)
+                    .FirstOrDefaultAsync(l => l.Id == id);
 
-            if (librarian.Requests.Any())
-            {
-                TempData["ErrorMessage"] = "Неможливо видалити бібліотекаря, оскільки він обробляв запити.";
+                if (librarian == null)
+                {
+                    TempData["Error"] = "Бібліотекаря не знайдено.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                foreach (var request in librarian.Requests)
+                {
+                    foreach (var issuedBook in request.IssuedBooks)
+                    {
+                        _context.IssuedBooks.Remove(issuedBook);
+                    }
+                    _context.Requests.Remove(request);
+                }
+
+                _context.Librarians.Remove(librarian);
+                await _context.SaveChangesAsync();
+
+                TempData["Message"] = $"Бібліотекаря {librarian.FullNameLibrarian} успішно видалено разом із пов’язаними запитами та видачами.";
                 return RedirectToAction(nameof(Index));
             }
-
-            _context.Librarians.Remove(librarian);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            catch (Exception ex)
+            {
+                TempData["Error"] = $"Помилка при видаленні бібліотекаря: {ex.Message}";
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         private bool LibrarianExists(long id)

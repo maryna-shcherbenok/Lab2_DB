@@ -75,14 +75,17 @@ namespace Lab2_DB.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                TempData["Error"] = "ID відділу не вказано.";
+                return RedirectToAction(nameof(Index));
             }
 
             var department = await _context.Departments.FindAsync(id);
             if (department == null)
             {
-                return NotFound();
+                TempData["Error"] = "Відділ не знайдено.";
+                return RedirectToAction(nameof(Index));
             }
+
             ViewData["Library"] = new SelectList(_context.Libraries, "Id", "TitleLibrary", department.Library);
             return View(department);
         }
@@ -96,7 +99,8 @@ namespace Lab2_DB.Controllers
         {
             if (id != department.Id)
             {
-                return NotFound();
+                TempData["Error"] = "ID відділу не співпадає.";
+                return RedirectToAction(nameof(Index));
             }
 
             ModelState.Remove("LibraryNavigation");
@@ -107,20 +111,28 @@ namespace Lab2_DB.Controllers
                 {
                     _context.Update(department);
                     await _context.SaveChangesAsync();
+
+                    TempData["Message"] = $"Відділ {department.TitleDepartment} успішно оновлено.";
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!DepartmentExists(department.Id))
                     {
-                        return NotFound();
+                        TempData["Error"] = "Відділ не знайдено.";
+                        return RedirectToAction(nameof(Index));
                     }
                     else
                     {
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                catch (Exception ex)
+                {
+                    TempData["Error"] = $"Помилка при оновленні відділу: {ex.Message}";
+                }
             }
+
             ViewData["Library"] = new SelectList(_context.Libraries, "Id", "TitleLibrary", department.Library);
             return View(department);
         }
@@ -130,15 +142,18 @@ namespace Lab2_DB.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                TempData["Error"] = "ID відділу не вказано.";
+                return RedirectToAction(nameof(Index));
             }
 
             var department = await _context.Departments
                 .Include(d => d.LibraryNavigation)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (department == null)
             {
-                return NotFound();
+                TempData["Error"] = "Відділ не знайдено.";
+                return RedirectToAction(nameof(Index));
             }
 
             return View(department);
@@ -149,24 +164,49 @@ namespace Lab2_DB.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var department = await _context.Departments
-                .Include(d => d.Funds)
-                .FirstOrDefaultAsync(d => d.Id == id);
-
-            if (department == null)
+            try
             {
-                return NotFound();
-            }
+                var department = await _context.Departments
+                    .Include(d => d.Funds)
+                    .ThenInclude(f => f.Books)
+                    .ThenInclude(b => b.IssuedBooks)
+                    .ThenInclude(ib => ib.Request)
+                    .FirstOrDefaultAsync(d => d.Id == id);
 
-            if (department.Funds.Any())
-            {
-                TempData["ErrorMessage"] = "Неможливо видалити відділ, оскільки до нього прив’язані фонди.";
+                if (department == null)
+                {
+                    TempData["Error"] = "Відділ не знайдено.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                foreach (var fund in department.Funds)
+                {
+                    foreach (var book in fund.Books)
+                    {
+                        foreach (var issuedBook in book.IssuedBooks)
+                        {
+                            if (issuedBook.Request != null)
+                            {
+                                _context.Requests.Remove(issuedBook.Request);
+                            }
+                            _context.IssuedBooks.Remove(issuedBook);
+                        }
+                        _context.Books.Remove(book);
+                    }
+                    _context.Funds.Remove(fund);
+                }
+
+                _context.Departments.Remove(department);
+                await _context.SaveChangesAsync();
+
+                TempData["Message"] = $"Відділ {department.TitleDepartment} успішно видалено разом із пов’язаними фондами та книгами.";
                 return RedirectToAction(nameof(Index));
             }
-
-            _context.Departments.Remove(department);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            catch (Exception ex)
+            {
+                TempData["Error"] = $"Помилка при видаленні відділу: {ex.Message}";
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         private bool DepartmentExists(long id)

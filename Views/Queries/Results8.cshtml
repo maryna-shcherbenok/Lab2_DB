@@ -1,15 +1,21 @@
 ﻿@model IEnumerable<object>
+
 @{
     ViewData["Title"] = "Результати запиту 8";
-    var dept = ViewBag.DeptName as string ?? "вибраного відділу";
 }
 
 <h2>Результати запиту 8</h2>
 
-@if (ViewBag.NoAvailableBooks != null && (bool)ViewBag.NoAvailableBooks)
+@if (ViewBag.NoBooks != null && (bool)ViewBag.NoBooks)
 {
-    <div class="alert alert-warning">
-        Усі книги з відділу <strong>@dept</strong> вже були видані.
+    <div class="alert alert-warning" role="alert">
+        Заданий читач не замовляв жодної книги.
+    </div>
+}
+else if (ViewBag.NoResults != null && (bool)ViewBag.NoResults)
+{
+    <div class="alert alert-info" role="alert">
+        Немає читачів, які замовили ті самі книги, що й заданий читач, і ще якісь.
     </div>
 }
 else
@@ -17,14 +23,14 @@ else
     <table class="table table-bordered table-striped">
         <thead>
             <tr>
-                <th>Книга</th>
+                <th>Читач</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var item in Model)
             {
                 <tr>
-                    <td>@item.GetType().GetProperty("TitleBook")?.GetValue(item)</td>
+                    <td>@item.GetType().GetProperty("FullNameReader")?.GetValue(item)</td>
                 </tr>
             }
         </tbody>
@@ -32,4 +38,3 @@ else
 }
 
 <a class="btn btn-primary mt-3" asp-action="Index" asp-controller="Queries">Назад</a>
-

@@ -25,8 +25,11 @@ namespace Lab2_DB.Migrations
             modelBuilder.Entity("Lab2_DB.Models.Author", b =>
                 {
                     b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasColumnName("ID");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("EmailAuthor")
                         .IsRequired()
@@ -51,8 +54,11 @@ namespace Lab2_DB.Migrations
             modelBuilder.Entity("Lab2_DB.Models.Book", b =>
                 {
                     b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasColumnName("ID");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<long>("AuthorBook")
                         .HasColumnType("bigint");
@@ -99,8 +105,11 @@ namespace Lab2_DB.Migrations
             modelBuilder.Entity("Lab2_DB.Models.Department", b =>
                 {
                     b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasColumnName("ID");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("LeaderDepartment")
                         .IsRequired()
@@ -125,8 +134,11 @@ namespace Lab2_DB.Migrations
             modelBuilder.Entity("Lab2_DB.Models.Fund", b =>
                 {
                     b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasColumnName("ID");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<long>("DepartmentFund")
                         .HasColumnType("bigint");
@@ -154,8 +166,11 @@ namespace Lab2_DB.Migrations
             modelBuilder.Entity("Lab2_DB.Models.IssuedBook", b =>
                 {
                     b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasColumnName("ID");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<long>("BookId")
                         .HasColumnType("bigint")
@@ -177,8 +192,11 @@ namespace Lab2_DB.Migrations
             modelBuilder.Entity("Lab2_DB.Models.Librarian", b =>
                 {
                     b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasColumnName("ID");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("EmailLibrarian")
                         .IsRequired()
@@ -203,8 +221,11 @@ namespace Lab2_DB.Migrations
             modelBuilder.Entity("Lab2_DB.Models.Library", b =>
                 {
                     b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasColumnName("ID");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("EmailLibrary")
                         .IsRequired()
@@ -239,8 +260,11 @@ namespace Lab2_DB.Migrations
             modelBuilder.Entity("Lab2_DB.Models.PublishingHouse", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("ID");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AddressPh")
                         .IsRequired()
@@ -274,8 +298,11 @@ namespace Lab2_DB.Migrations
             modelBuilder.Entity("Lab2_DB.Models.Reader", b =>
                 {
                     b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasColumnName("ID");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("EmailReader")
                         .IsRequired()
@@ -310,8 +337,11 @@ namespace Lab2_DB.Migrations
             modelBuilder.Entity("Lab2_DB.Models.Request", b =>
                 {
                     b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasColumnName("ID");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<long>("CardNumberReader")
                         .HasColumnType("bigint");
@@ -350,18 +380,21 @@ namespace Lab2_DB.Migrations
                     b.HasOne("Lab2_DB.Models.Author", "AuthorBookNavigation")
                         .WithMany("Books")
                         .HasForeignKey("AuthorBook")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_Books_Authors");
 
                     b.HasOne("Lab2_DB.Models.Fund", "FundBookNavigation")
                         .WithMany("Books")
                         .HasForeignKey("FundBook")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_Books_Funds");
 
                     b.HasOne("Lab2_DB.Models.PublishingHouse", "PublisherBookNavigation")
                         .WithMany("Books")
                         .HasForeignKey("PublisherBook")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_Books_PublishingHouses");
 
@@ -377,6 +410,7 @@ namespace Lab2_DB.Migrations
                     b.HasOne("Lab2_DB.Models.Library", "LibraryNavigation")
                         .WithMany("Departments")
                         .HasForeignKey("Library")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_Departments_Libraries");
 
@@ -388,6 +422,7 @@ namespace Lab2_DB.Migrations
                     b.HasOne("Lab2_DB.Models.Department", "DepartmentFundNavigation")
                         .WithMany("Funds")
                         .HasForeignKey("DepartmentFund")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_Funds_Departments");
 
@@ -399,12 +434,14 @@ namespace Lab2_DB.Migrations
                     b.HasOne("Lab2_DB.Models.Book", "Book")
                         .WithMany("IssuedBooks")
                         .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_IssuedBooks_Books1");
 
                     b.HasOne("Lab2_DB.Models.Request", "Request")
                         .WithMany("IssuedBooks")
                         .HasForeignKey("RequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_IssuedBooks_Requests");
 
@@ -418,12 +455,14 @@ namespace Lab2_DB.Migrations
                     b.HasOne("Lab2_DB.Models.Reader", "CardNumberReaderNavigation")
                         .WithMany("Requests")
                         .HasForeignKey("CardNumberReader")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_Requests_Readers");
 
                     b.HasOne("Lab2_DB.Models.Librarian", "PassNumberLibrarianNavigation")
                         .WithMany("Requests")
                         .HasForeignKey("PassNumberLibrarian")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_Requests_Librarians");
 

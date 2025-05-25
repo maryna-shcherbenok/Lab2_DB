@@ -82,14 +82,17 @@ namespace Lab2_DB.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                TempData["Error"] = "ID автора не вказано.";
+                return RedirectToAction(nameof(Index));
             }
 
             var author = await _context.Authors.FindAsync(id);
             if (author == null)
             {
-                return NotFound();
+                TempData["Error"] = "Автора не знайдено.";
+                return RedirectToAction(nameof(Index));
             }
+
             return View(author);
         }
 
@@ -100,7 +103,8 @@ namespace Lab2_DB.Controllers
         {
             if (id != author.Id)
             {
-                return NotFound();
+                TempData["Error"] = "ID автора не співпадає.";
+                return RedirectToAction(nameof(Index));
             }
 
             ModelState.Remove("Books");
@@ -123,19 +127,26 @@ namespace Lab2_DB.Controllers
                 {
                     _context.Update(author);
                     await _context.SaveChangesAsync();
+
+                    TempData["Message"] = $"Автора {author.FullNameAuthor} успішно оновлено.";
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!AuthorExists(author.Id))
                     {
-                        return NotFound();
+                        TempData["Error"] = "Автора не знайдено.";
+                        return RedirectToAction(nameof(Index));
                     }
                     else
                     {
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                catch (Exception ex)
+                {
+                    TempData["Error"] = $"Помилка при оновленні автора: {ex.Message}";
+                }
             }
 
             return View(author);
@@ -146,14 +157,17 @@ namespace Lab2_DB.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                TempData["Error"] = "ID автора не вказано.";
+                return RedirectToAction(nameof(Index));
             }
 
             var author = await _context.Authors
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (author == null)
             {
-                return NotFound();
+                TempData["Error"] = "Автора не знайдено.";
+                return RedirectToAction(nameof(Index));
             }
 
             return View(author);
@@ -164,25 +178,44 @@ namespace Lab2_DB.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var author = await _context.Authors
-                .Include(a => a.Books) // завантажити пов’язані книги
-                .FirstOrDefaultAsync(a => a.Id == id);
-
-            if (author == null)
+            try
             {
-                return NotFound();
-            }
+                var author = await _context.Authors
+                    .Include(a => a.Books)
+                    .ThenInclude(b => b.IssuedBooks)
+                    .ThenInclude(ib => ib.Request)
+                    .FirstOrDefaultAsync(a => a.Id == id);
 
-            if (author.Books.Any())
-            {
-                // Створюємо повідомлення в TempData, щоб передати його у View
-                TempData["ErrorMessage"] = "Неможливо видалити автора, оскільки він пов’язаний з існуючими книгами.";
+                if (author == null)
+                {
+                    TempData["Error"] = "Автора не знайдено.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                foreach (var book in author.Books)
+                {
+                    foreach (var issuedBook in book.IssuedBooks)
+                    {
+                        if (issuedBook.Request != null)
+                        {
+                            _context.Requests.Remove(issuedBook.Request);
+                        }
+                        _context.IssuedBooks.Remove(issuedBook);
+                    }
+                    _context.Books.Remove(book);
+                }
+
+                _context.Authors.Remove(author);
+                await _context.SaveChangesAsync();
+
+                TempData["Message"] = $"Автора {author.FullNameAuthor} успішно видалено разом із пов’язаними книгами.";
                 return RedirectToAction(nameof(Index));
             }
-
-            _context.Authors.Remove(author);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            catch (Exception ex)
+            {
+                TempData["Error"] = $"Помилка при видаленні автора: {ex.Message}";
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         private bool AuthorExists(long id)
