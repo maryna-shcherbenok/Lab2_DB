@@ -1,0 +1,40 @@
+﻿@model IEnumerable<object>
+
+@{
+    ViewData["Title"] = "Результати запиту 11";
+}
+
+<h2>Результати запиту 11</h2>
+
+@if (ViewBag.NoBooks != null && (bool)ViewBag.NoBooks)
+{
+    <div class="alert alert-warning" role="alert">
+        Вибрана бібліотека не має жодної книги.
+    </div>
+}
+else if (ViewBag.NoResults != null && (bool)ViewBag.NoResults)
+{
+    <div class="alert alert-info" role="alert">
+        Немає бібліотек, які мають усі книги вибраної бібліотеки і ще якісь.
+    </div>
+}
+else
+{
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Назва бібліотеки</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.GetType().GetProperty("TitleLibrary")?.GetValue(item)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<a class="btn btn-primary mt-3" asp-action="Index" asp-controller="Queries">Назад</a>

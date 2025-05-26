@@ -310,5 +310,59 @@ namespace Lab2_DB.Controllers
 
             return View("Results10", readers);
         }
+
+        [HttpPost]
+        public IActionResult Query11(long LibraryId)
+        {
+            // Книги заданої бібліотеки за ключовими полями
+            var referenceBooks = _context.Books
+                .Include(b => b.FundBookNavigation)
+                    .ThenInclude(f => f.DepartmentFundNavigation)
+                .Where(b => b.FundBookNavigation.DepartmentFundNavigation.Library == LibraryId)
+                .Select(b => new { b.Isbn, b.TitleBook, b.AuthorBook, b.PublisherBook, b.NumberPages })
+                .Distinct()
+                .ToList();
+
+            if (!referenceBooks.Any())
+            {
+                ViewBag.NoBooks = true;
+                return View("Results11", new List<object>());
+            }
+
+            var otherLibraries = _context.Libraries
+                .Where(l => l.Id != LibraryId)
+                .ToList(); // Завантажуємо повністю список бібліотек перед використанням AsEnumerable
+
+            var connection = _context.Database.GetDbConnection();
+            var libraries = new List<object>();
+
+            foreach (var l in otherLibraries)
+            {
+                using var scope = new LibraryContext(new DbContextOptionsBuilder<LibraryContext>()
+                    .UseSqlServer(connection.ConnectionString)
+                    .Options);
+
+                var bookSet = scope.Books
+                    .Include(b => b.FundBookNavigation)
+                        .ThenInclude(f => f.DepartmentFundNavigation)
+                    .Where(b => b.FundBookNavigation.DepartmentFundNavigation.Library == l.Id)
+                    .Select(b => new { b.Isbn, b.TitleBook, b.AuthorBook, b.PublisherBook, b.NumberPages })
+                    .Distinct()
+                    .ToList();
+
+                if (referenceBooks.All(rb => bookSet.Contains(rb)))
+                {
+                    libraries.Add(new { l.TitleLibrary });
+                }
+            }
+
+            if (!libraries.Any())
+            {
+                ViewBag.NoResults = true;
+            }
+
+            ViewBag.LibraryId = LibraryId;
+            return View("Results11", libraries);
+        }
     }
 }

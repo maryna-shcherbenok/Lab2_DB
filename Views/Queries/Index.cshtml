@@ -64,7 +64,7 @@
         <div class="col-md-6">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <h5 class="card-title">4. Знайти назву відділу, назву бібліотеки та загальну кількість примірників у фондах обраного відділу.</h5>
+                    <h5 class="card-title">4. Знайти назву бібліотеки та загальну кількість примірників у фондах обраного відділу.</h5>
                     @using (Html.BeginForm("Query4", "Queries", FormMethod.Post))
                     {
                         <div class="input-group">
@@ -198,6 +198,26 @@
                                 @foreach (var reader in ViewBag.Readers)
                                 {
                                     <option value="@reader.Id">@reader.FullNameReader</option>
+                                }
+                            </select>
+                            <button type="submit" class="btn btn-primary">Пошук</button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">11. Знайти назви бібліотек, які мають принаймні всі книги, що і вибрана бібліотека, і ще якісь книги.</h5>
+                    @using (Html.BeginForm("Query11", "Queries", FormMethod.Post))
+                    {
+                        <div class="input-group">
+                            <select name="LibraryId" class="form-select">
+                                @foreach (var library in ViewBag.Libraries)
+                                {
+                                    <option value="@library.Id">@library.TitleLibrary</option>
                                 }
                             </select>
                             <button type="submit" class="btn btn-primary">Пошук</button>
